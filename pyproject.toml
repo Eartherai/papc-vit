@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "papc-vit"
+version = "1.0.0"
+description = "Predictive Coding auxiliary losses for pretrained Vision Transformers (CAISc 2026)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["predictive-coding", "vision-transformer", "calibration", "medmnist", "state-space-model"]
+dependencies = [
+    "torch>=2.1",
+    "timm>=1.0",
+    "medmnist>=3.0",
+    "scikit-learn",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scipy",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Paper = "https://openreview.net/forum?id=Kcsv2jUROe"
+
+[tool.setuptools]
+packages = ["papc"]
