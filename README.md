@@ -400,7 +400,7 @@ See [`reproducibility/`](reproducibility/), [`docs/METHOD.md`](docs/METHOD.md), 
 @inproceedings{papc2026,
   title     = {Predictive Coding Auxiliary Losses Are Calibration Levers,
                Not Accuracy Levers: A Cross-Domain Empirical Study},
-  author    = {<AUTHORS>},
+  author    = {Khamir Desai},
   booktitle = {1st Conference for AI Scientists (CAISc)},
   year      = {2026},
   url       = {https://openreview.net/forum?id=Kcsv2jUROe}
