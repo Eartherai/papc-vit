@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Render the repository hero banner to ``assets/banner.png``.
 
-A self-contained matplotlib script (no external assets) so the banner can be
-regenerated or restyled at will.
+Self-contained matplotlib script (no external assets), rendered at 300 dpi so it
+stays crisp on high-density displays.
 
     python scripts/make_banner.py
 """
@@ -14,93 +14,91 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Circle  # noqa: E402
+
+BG_TOP = "#122a49"
+BG_BOT = "#060d18"
+WHITE = "#ffffff"
+MUTED = "#93a6c0"
+ACCENT = "#e8833a"
+BLUE = "#63a8ee"
 
 
-INK = "#0b1f3a"       # deep navy
-INK2 = "#12305c"      # lighter navy for the gradient
-ACCENT = "#e8833a"    # warm orange (the "calibration" accent)
-BLUE = "#5aa0e6"      # cool blue (the "AUC" accent)
-CREAM = "#f4ede2"
+def _track(text, em=0.18):
+    """Poor-man's letter-spacing: matplotlib has no tracking control."""
+    sep = " " * max(1, int(round(em * 4)))
+    return sep.join(list(text))
 
 
-def make_banner(out_path, w=1600, h=460, dpi=200):
-    fig = plt.figure(figsize=(w / dpi, h / dpi), dpi=dpi)
+def make_banner(out_path, dpi=300):
+    fig = plt.figure(figsize=(8.0, 2.0), dpi=dpi)
     ax = fig.add_axes([0, 0, 1, 1])
-    ax.set_xlim(0, 16)
-    ax.set_ylim(0, 4.6)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 25)
     ax.axis("off")
 
-    # vertical gradient background
-    grad = np.linspace(0, 1, 256).reshape(-1, 1)
-    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("bg", [INK2, INK])
-    ax.imshow(grad, extent=[0, 16, 0, 4.6], aspect="auto", cmap=cmap, zorder=0)
+    # background: vertical gradient + a soft diagonal light
+    grad = np.linspace(0, 1, 512).reshape(-1, 1)
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("bg", [BG_TOP, BG_BOT])
+    ax.imshow(grad, extent=[0, 100, 0, 25], aspect="auto", cmap=cmap,
+              zorder=0, interpolation="bilinear")
+    gx, gy = np.meshgrid(np.linspace(0, 1, 400), np.linspace(0, 1, 120))
+    glow = np.exp(-(((gx - 0.16) ** 2) / 0.10 + ((gy - 0.75) ** 2) / 0.30))
+    ax.imshow(glow, extent=[0, 100, 0, 25], aspect="auto", cmap="Blues_r",
+              alpha=0.10, zorder=1, interpolation="bilinear")
 
-    # --- left: schematic ViT blocks with a PC sidecar --------------------------
-    y = 3.05
-    xs = [0.7, 2.15, 3.6]
-    for i, x in enumerate(xs):
-        ax.add_patch(FancyBboxPatch((x, y), 1.05, 0.72, boxstyle="round,pad=0.03,rounding_size=0.12",
-                                    fc="#20406e", ec=BLUE, lw=1.6, zorder=3))
-        ax.text(x + 0.52, y + 0.36, f"$f_{i+1}$", color="white", ha="center", va="center",
-                fontsize=13, zorder=4)
-        if i < len(xs) - 1:
-            ax.add_patch(FancyArrowPatch((x + 1.05, y + 0.36), (xs[i + 1], y + 0.36),
-                                         arrowstyle="-|>", mutation_scale=13, color="white", lw=1.6, zorder=3))
-    # PC predictor + gate motif under block 1 -> 2
-    ax.add_patch(FancyBboxPatch((2.05, 1.75), 1.1, 0.5, boxstyle="round,pad=0.03,rounding_size=0.1",
-                                fc="#3a2a14", ec=ACCENT, lw=1.5, zorder=3))
-    ax.text(2.6, 2.0, "Diag. SSM", color=ACCENT, ha="center", va="center", fontsize=8.5, zorder=4)
-    ax.add_patch(FancyArrowPatch((1.22, y), (2.35, 2.25), arrowstyle="-|>", mutation_scale=10,
-                                 color=BLUE, lw=1.3, zorder=2))
-    ax.add_patch(Circle((3.4, 2.7), 0.18, fc="#1f5d3a", ec="#6fdc9b", lw=1.4, zorder=4))
-    ax.text(3.4, 2.7, "$g$", color="#c9ffe0", ha="center", va="center", fontsize=9, zorder=5)
-    ax.add_patch(FancyArrowPatch((3.15, 2.0), (3.55, y - 0.02), arrowstyle="-|>", mutation_scale=9,
-                                 color="#6fdc9b", lw=1.3, zorder=2))
-
-    # --- right: wordmark + tagline --------------------------------------------
-    X0 = 5.6
-    ax.text(X0, 3.15, "PAPC", color="white", fontsize=60, fontweight="bold",
+    # ---- left: wordmark ------------------------------------------------------
+    ax.text(6, 15.4, "PAPC", color=WHITE, fontsize=44, fontweight="bold",
             ha="left", va="center", zorder=5)
-    ax.text(X0 + 0.06, 2.18, "Predictive Coding for Pretrained ViTs",
-            color=CREAM, fontsize=15, ha="left", va="center", zorder=5)
+    # thin accent rule under the wordmark
+    ax.plot([6.4, 20.5], [10.6, 10.6], color=ACCENT, lw=2.0,
+            solid_capstyle="butt", zorder=5)
 
-    # colored tagline laid out by measuring rendered text extents
-    fig.canvas.draw()
-    rend = fig.canvas.get_renderer()
-    inv = ax.transData.inverted()
+    ax.text(6.4, 7.4, _track("PREDICTIVE CODING FOR PRETRAINED ViTs"),
+            color=MUTED, fontsize=6.2, ha="left", va="center", zorder=5)
+    ax.text(6.4, 3.6,
+            r"CAISc 2026      $w^{*}\approx257\,n^{-1.41}$      8 MedMNIST + CIFAR-100",
+            color="#5f7495", fontsize=5.6, ha="left", va="center", zorder=5)
 
-    def run(x, y, parts, size):
-        for text, color, weight in parts:
-            t = ax.text(x, y, text, color=color, fontsize=size, fontweight=weight,
-                        ha="left", va="center", zorder=5)
-            fig.canvas.draw()
-            bb = t.get_window_extent(renderer=rend)
-            x = inv.transform((bb.x1, 0))[0]
+    # ---- right: the thesis, drawn as a minimal chart -------------------------
+    x0, x1 = 62.0, 94.0
+    yb, yt = 6.0, 19.0
+    ax.plot([x0, x1], [yb, yb], color="#2b3f5c", lw=0.9, zorder=3)
+    ax.plot([x0, x0], [yb, yt], color="#2b3f5c", lw=0.9, zorder=3)
 
-    run(X0 + 0.08, 1.52, [
-        ("Calibration levers", ACCENT, "bold"),
-        (", not ", "#b9c6da", "normal"),
-        ("accuracy levers", BLUE, "bold"),
-    ], 13)
+    t = np.linspace(0, 1, 200)
+    # AUC: flat (discriminability unchanged)
+    auc = np.full_like(t, 0.80) + 0.005 * np.sin(t * 6)
+    # ECE: moves a lot (calibration is the lever)
+    ece = 0.14 + 0.44 * t ** 2.2
+    ax.plot(x0 + t * (x1 - x0), yb + auc * (yt - yb), color=BLUE, lw=2.3, zorder=4)
+    ax.plot(x0 + t * (x1 - x0), yb + ece * (yt - yb), color=ACCENT, lw=2.3, zorder=4)
 
-    # scaling-law chip
-    ax.text(X0 + 0.08, 0.74,
-            r"$w^* \approx 257\,n^{-1.41}$    ·    8 MedMNIST + CIFAR-100    ·    CAISc 2026",
-            color="#8fa3bf", fontsize=10.5, ha="left", va="center", zorder=5)
+    ax.text(x1 + 1.2, yb + 0.80 * (yt - yb), "AUC", color=BLUE, fontsize=5.8,
+            ha="left", va="center", fontweight="bold", zorder=5)
+    ax.text(x1 + 1.2, yb + 0.58 * (yt - yb), "ECE", color=ACCENT, fontsize=5.8,
+            ha="left", va="center", fontweight="bold", zorder=5)
+    ax.text(x0, yb - 1.9, _track("AUXILIARY WEIGHT  w"), color="#4c6083",
+            fontsize=4.8, ha="left", va="center", zorder=5)
 
-    fig.savefig(out_path, dpi=dpi)
+    # ---- centre: the claim ---------------------------------------------------
+    ax.text(34.5, 15.0, "Calibration levers,", color=ACCENT, fontsize=10.5,
+            fontweight="bold", ha="left", va="center", zorder=5)
+    ax.text(34.5, 10.2, "not accuracy levers", color=BLUE, fontsize=10.5,
+            fontweight="bold", ha="left", va="center", zorder=5)
+
+    fig.savefig(out_path, dpi=dpi, facecolor=BG_BOT)
     plt.close(fig)
-    print("wrote", out_path)
+    print(f"wrote {out_path}  ({int(8.0 * dpi)}x{int(2.0 * dpi)} px)")
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default="assets/banner.png")
+    ap.add_argument("--dpi", type=int, default=300)
     args = ap.parse_args()
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
-    make_banner(args.out)
+    make_banner(args.out, dpi=args.dpi)
 
 
 if __name__ == "__main__":

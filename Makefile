@@ -1,23 +1,37 @@
-.PHONY: install test analyze figures clean
+PYTHON ?= python3
+
+.PHONY: install test analyze figures logs banner reproduce smoke-gpu clean
 
 install:
-	pip install -e ".[dev]"
+	$(PYTHON) -m pip install -e ".[dev]"
 
 test:
-	pytest -q
+	$(PYTHON) -m pytest -q
 
-# Reproduce the paper's tables from the checked-in result JSONs (no GPU needed).
+# Reproduce the paper's tables from the recorded result JSONs (no GPU needed).
 analyze:
-	python scripts/analyze_results.py --results-dir results
+	$(PYTHON) scripts/analyze_results.py --results-dir results
 
-# Regenerate figures into assets/ (no GPU needed).
+# Regenerate result figures into assets/ (no GPU needed).
 figures:
-	python scripts/make_figures.py --results-dir results --out-dir assets
+	$(PYTHON) scripts/make_figures.py --results-dir results --out-dir assets
+
+# Export per-run logs from the result JSONs into logs/ (no GPU needed).
+logs:
+	$(PYTHON) scripts/export_logs.py --results-dir results --out-dir logs
+
+# Regenerate the README banner.
+banner:
+	$(PYTHON) scripts/make_banner.py
+
+# Everything that can be reproduced without a GPU.
+reproduce: test analyze figures logs
 
 # Example single-dataset GPU run.
 smoke-gpu:
-	python scripts/run_experiments.py --dataset pneumoniamnist \
+	$(PYTHON) scripts/run_experiments.py --dataset pneumoniamnist \
 		--conditions vanilla fixed:0.05 papc --seeds 1 --output-dir results_repro
 
 clean:
-	rm -rf results_repro medmnist_data cifar __pycache__ */__pycache__ *.egg-info
+	rm -rf results_repro medmnist_data cifar checkpoints \
+		__pycache__ */__pycache__ *.egg-info .pytest_cache
