@@ -3,12 +3,12 @@
 
 Produces a checkpoint first by training with ``--save-models``::
 
-    python scripts/run_experiments.py --dataset dermamnist \
+    python train.py --dataset dermamnist \
         --conditions papc --seeds 1 --save-models checkpoints --output-dir results_repro
 
 then classify any image::
 
-    python scripts/predict.py --checkpoint checkpoints/dermamnist_papc_s0.pt \
+    python predict.py --checkpoint checkpoints/dermamnist_papc_s0.pt \
         --image path/to/lesion.png --topk 3
 
 The script reports the predicted class and its confidence — the quantity this
@@ -17,17 +17,14 @@ paper shows PAPC reshapes. It needs only a CPU.
 
 import argparse
 import os
-import sys
-
 import numpy as np
 import torch
 import torch.nn.functional as F
 from PIL import Image
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from papc.model import PAPCViT  # noqa: E402
-from papc.data import build_tf  # noqa: E402
+from papc import PAPCViT
+from datasets import build_tf
 
 
 def load_model(checkpoint, device):

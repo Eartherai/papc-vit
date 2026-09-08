@@ -21,3 +21,4 @@ cifar/
 .ipynb_checkpoints/
 .idea/
 .vscode/
+.pytest_cache/

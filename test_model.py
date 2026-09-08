@@ -6,7 +6,8 @@ need no network access and run in seconds on CPU.
 
 import torch
 
-from papc import PAPCViT, mk_vanilla, mk_fixed, mk_papc, mk_clamped
+from papc import PAPCViT
+from train import mk_vanilla, mk_fixed, mk_papc, mk_clamped
 
 
 def _build(num_classes=8, in_chans=3, **kw):

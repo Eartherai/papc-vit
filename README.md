@@ -18,7 +18,7 @@
 <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.9%2B-3776AB.svg" alt="Python"/></a>
 <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.1%2B-EE4C2C.svg" alt="PyTorch"/></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License"/></a>
-<a href="tests/"><img src="https://img.shields.io/badge/tests-6%20passing-brightgreen.svg" alt="Tests"/></a>
+<img src="https://img.shields.io/badge/tests-6%20passing-brightgreen.svg" alt="Tests"/>
 
 </div>
 
@@ -36,7 +36,6 @@ sizes, the answer reframes the question:
 
 **Paper:** [openreview.net/forum?id=Kcsv2jUROe](https://openreview.net/forum?id=Kcsv2jUROe)
 · **PDF:** [openreview.net/pdf?id=Kcsv2jUROe](https://openreview.net/pdf?id=Kcsv2jUROe)
-· **Local copy:** [`paper/CAISc2026_SUBMIT_v3.pdf`](paper/CAISc2026_SUBMIT_v3.pdf)
 
 ---
 
@@ -81,7 +80,7 @@ on DermaMNIST by +4.5 AUC points and RetinaMNIST by +8.3 points, suggesting
 training recipes dominate architectural novelty on these benchmarks.
 
 <div align="center">
-<img src="assets/paper/fig1_architecture.png" width="92%" alt="HP-ViT architecture"/><br>
+<img src="assets/fig1_architecture.png" width="92%" alt="HP-ViT architecture"/><br>
 <sub><b>Figure 1.</b> A diagonal SSM predicts each ViT block's output from the previous block's activations. The prediction error is folded back through a learned gate <i>g<sub>i</sub></i>, initialised to zero; the auxiliary loss uses a stop-gradient target. In PAPC, <i>w<sub>i</sub></i> is learnable per layer and cosine-warmed from zero.</sub>
 </div>
 
@@ -119,7 +118,7 @@ produced the calibration-lever result.
 
 Test AUC (mean ± std over 3 seeds), ViT-Base at 224 px. The final column marks
 where the plain vanilla baseline already exceeds the best published specialist
-model. Reproduce with `python scripts/analyze_results.py`.
+model. Reproduce with `python analyze.py --tables`.
 
 | Dataset | n | Vanilla | HP (w=0.05) | PAPC | Best published | Vanilla > published |
 |---|---:|:---:|:---:|:---:|:---:|:---:|
@@ -141,12 +140,12 @@ discriminability — while naive fixed `w=0.05` can actively hurt (DermaMNIST,
 ## The calibration-lever effect
 
 <div align="center">
-<img src="assets/paper/fig2_weight_sweep.png" width="80%" alt="AUC and ECE versus auxiliary weight"/><br>
+<img src="assets/fig2_weight_sweep.png" width="80%" alt="AUC and ECE versus auxiliary weight"/><br>
 <sub><b>Figure 2.</b> AUC (top) and ECE (bottom) against auxiliary weight <i>w</i>. On DermaMNIST a larger <i>w</i> worsens ECE; on PneumoniaMNIST it improves ECE 3.2x. AUC stays essentially flat on both.</sub>
 </div>
 
 <div align="center">
-<img src="assets/paper/fig3_cifar_ece.png" width="45%" alt="CIFAR-100 ECE"/><br>
+<img src="assets/fig3_cifar_ece.png" width="45%" alt="CIFAR-100 ECE"/><br>
 <sub><b>Figure 3.</b> On CIFAR-100, <i>w</i>=0.05 degrades calibration (+88% ECE at n=50k) for a negligible AUC change.</sub>
 </div>
 
@@ -162,7 +161,7 @@ through a learned gate. Clamping the gate isolates the two: the auxiliary loss
 stays active, the integration pathway is forced off.
 
 <div align="center">
-<img src="assets/paper/fig5_gate_clamping.png" width="80%" alt="Gate-clamping ablation"/><br>
+<img src="assets/fig5_gate_clamping.png" width="80%" alt="Gate-clamping ablation"/><br>
 <sub><b>Figure 5.</b> Gate-clamping ablation at <i>w</i>=0.05. Clamped and Full track each other on AUC, so the effect is driven by the loss gradient rather than by re-injecting the error.</sub>
 </div>
 
@@ -180,7 +179,7 @@ stays active, the integration pathway is forced off.
 ## The scaling law
 
 <div align="center">
-<img src="assets/paper/fig4_scaling_law.png" width="45%" alt="Scaling law"/><br>
+<img src="assets/fig4_scaling_law.png" width="45%" alt="Scaling law"/><br>
 <sub><b>Figure 4.</b> The AUC-optimal auxiliary weight against training-set size across four MedMNIST datasets.</sub>
 </div>
 
@@ -237,8 +236,6 @@ the linear recurrence to about 2e-7, but evaluated as a single `conv1d`.
 | PAPC | learned and cosine-warmed | `adaptive=True, progressive=True` |
 | gate-clamped | fixed `w`, integration off | `clamp_gate=True` |
 
-Full equation-to-code mapping: [`docs/METHOD.md`](docs/METHOD.md).
-
 ---
 
 ## Installation
@@ -246,7 +243,7 @@ Full equation-to-code mapping: [`docs/METHOD.md`](docs/METHOD.md).
 ```bash
 git clone https://github.com/Eartherai/papc-vit.git
 cd papc-vit
-pip install -e ".[dev]"
+pip install -r requirements.txt
 ```
 
 Requires Python 3.9+, PyTorch 2.1+, `timm` 1.0+, `medmnist` 3.0+, plus
@@ -256,7 +253,7 @@ is required only for training; analysis, figures, inference and tests run on CPU
 Verify:
 
 ```bash
-pytest -q          # 6 passed
+python -m pytest -q          # 6 passed
 ```
 
 ---
@@ -267,19 +264,13 @@ Every table and figure is regenerated from the recorded results in
 [`results/`](results/) — no GPU, a few seconds:
 
 ```bash
-python scripts/analyze_results.py --results-dir results     # tables
-python scripts/make_figures.py --results-dir results --out-dir assets
-python scripts/export_logs.py  --results-dir results --out-dir logs
+python analyze.py             # tables + figures + logs
+python analyze.py --tables    # just the tables
 ```
 
-`analyze_results.py` prints the SOTA table, the gate-clamping ablation and the
-fitted scaling law. `export_logs.py` writes per-run logs to [`logs/`](logs/):
+`analyze.py` prints the SOTA table, the gate-clamping ablation and the
+fitted scaling law. It also writes per-run logs to [`results/logs/`](results/logs/):
 **269 runs, 36.2 GPU-hours** of recorded train and eval time.
-
-Make targets: `make analyze`, `make figures`, `make logs`, `make test`.
-
-Full instructions, expected output, hardware notes and expected run-to-run
-variance: **[`docs/REPRODUCE.md`](docs/REPRODUCE.md)**.
 
 ---
 
@@ -291,7 +282,7 @@ budget, so an interrupted run can simply be restarted. Datasets and the
 pretrained backbone download automatically on first use.
 
 ```bash
-python scripts/run_experiments.py --session A --output-dir results_repro
+python train.py --session A --output-dir results_repro
 ```
 
 | Session | Contents | Output keys |
@@ -304,7 +295,7 @@ python scripts/run_experiments.py --session A --output-dir results_repro
 Ad-hoc grid on a single dataset, saving checkpoints for inference:
 
 ```bash
-python scripts/run_experiments.py --dataset dermamnist \
+python train.py --dataset dermamnist \
     --conditions vanilla fixed:0.05 clamped:0.05 papc \
     --seeds 3 --save-models checkpoints --output-dir results_repro
 ```
@@ -319,7 +310,7 @@ Flags: `--seeds`, `--output-dir`, `--time-budget-hours`, `--save-models`.
 Classify a single image with a checkpoint saved by `--save-models`. CPU is fine:
 
 ```bash
-python scripts/predict.py \
+python predict.py \
     --checkpoint checkpoints/dermamnist_papc_s0.pt \
     --image path/to/image.png --topk 3
 ```
@@ -356,7 +347,7 @@ model.gate_values()                     # per-layer tanh(gate)
 model.learned_weights()                 # per-layer w_i (PAPC only)
 ```
 
-Condition factories in [`papc/config.py`](papc/config.py): `mk_vanilla`,
+Condition factories in [`train.py`](train.py): `mk_vanilla`,
 `mk_fixed(w)`, `mk_prog(w)`, `mk_adaptive`, `mk_papc`, `mk_clamped(w)`.
 
 ---
@@ -365,25 +356,15 @@ Condition factories in [`papc/config.py`](papc/config.py): `mk_vanilla`,
 
 ```
 papc-vit/
-├── papc/                    Installable package
-│   ├── model.py             DiagonalSSM, PCLayer, PAPCViT (all variants)
-│   ├── data.py              MedMNIST/CIFAR loaders, transforms, EMA, AUC/ECE
-│   ├── train.py             train_eval: fine-tune, evaluate, save checkpoints
-│   ├── config.py            Per-dataset hyper-parameters, baselines, conditions
-│   └── experiments.py       Sessions A-D and the scaling-law fit
-├── scripts/
-│   ├── run_experiments.py   Training entry point (sessions or ad-hoc grids)
-│   ├── predict.py           Single-image inference from a checkpoint
-│   ├── analyze_results.py   Regenerate the paper's tables
-│   ├── make_figures.py      Regenerate result figures
-│   ├── export_logs.py       Export per-run logs from the results JSON
-│   └── make_banner.py       Regenerate the README banner
-├── results/                 Recorded metrics (JSON) + schema documentation
-├── logs/                    Per-run logs exported from results/
-├── paper/                   CAISc 2026 manuscript PDF
-├── assets/                  Banner and figures (assets/paper/ from the PDF)
-├── docs/                    METHOD.md, REPRODUCE.md
-└── tests/                   CPU smoke tests
+├── papc.py            Model: DiagonalSSM, PCLayer, PAPCViT (all variants)
+├── datasets.py        MedMNIST/CIFAR loaders, transforms, EMA, AUC/ECE metrics
+├── train.py           Training entry point: configs, train_eval, sessions A-D, CLI
+├── predict.py         Single-image inference from a saved checkpoint
+├── analyze.py         Regenerate the tables, figures, and per-run logs
+├── test_model.py      CPU smoke tests
+├── requirements.txt
+├── assets/            Banner and figures
+└── results/           Recorded metrics (JSON), schema, and logs/
 ```
 
 ---
