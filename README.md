@@ -18,7 +18,7 @@
 <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.9%2B-3776AB.svg" alt="Python"/></a>
 <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.1%2B-EE4C2C.svg" alt="PyTorch"/></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License"/></a>
-<img src="https://img.shields.io/badge/tests-6%20passing-brightgreen.svg" alt="Tests"/>
+<a href="https://github.com/Eartherai/papc-vit/actions/workflows/ci.yml"><img src="https://github.com/Eartherai/papc-vit/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
 
 </div>
 
