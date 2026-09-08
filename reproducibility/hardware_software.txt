@@ -1,0 +1,7 @@
+Hardware
+- NVIDIA A100 GPUs (40 GB and 80 GB variants)
+- Runs performed across multiple accounts/sessions
+
+Software
+- Python 3.11
+- PyTorch / timm / scikit-learn / matplotlib / numpy / pandas / jupyter

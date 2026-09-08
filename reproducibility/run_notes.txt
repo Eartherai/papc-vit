@@ -1,0 +1,8 @@
+Suggested rerun entrypoint:
+- Open notebooks/PAPC_final_runs.ipynb
+- Execute cells from top to bottom
+- Use the JSON files in results/ as reference outputs
+
+Notes:
+- Keep random seeds fixed as documented in the notebook.
+- Verify package versions before rerunning.
