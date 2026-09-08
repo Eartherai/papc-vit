@@ -40,8 +40,13 @@ def configure_backends():
 
 
 def train_eval(model_kw, tr, va, te, task, nc, ic, epochs, bs, lr, seed,
-               model_name=DEFAULT_MODEL_NAME, img_size=DEFAULT_IMG_SIZE):
-    """Train one model and evaluate it. ``model_kw`` are kwargs for ``PAPCViT``."""
+               model_name=DEFAULT_MODEL_NAME, img_size=DEFAULT_IMG_SIZE,
+               save_path=None):
+    """Train one model and evaluate it. ``model_kw`` are kwargs for ``PAPCViT``.
+
+    If ``save_path`` is given, the EMA weights and enough config to rebuild the
+    model are written there (loadable by ``scripts/predict.py``).
+    """
     from timm.data import Mixup
 
     device, amp_dtype = configure_backends()
@@ -100,7 +105,13 @@ def train_eval(model_kw, tr, va, te, task, nc, ic, epochs, bs, lr, seed,
             ema.update(model)
             gs += 1
 
-    bk = ema.apply(model)
+    bk = ema.apply(model)   # evaluate (and save) with EMA weights
+    if save_path:
+        torch.save({
+            "state_dict": {k: v.detach().cpu() for k, v in model.state_dict().items()},
+            "model_kw": model_kw, "num_classes": nc, "in_chans": ic, "task": task,
+            "model_name": model_name, "img_size": img_size,
+        }, save_path)
     model.eval()
     ys_all, ss_all = [], []
     with torch.no_grad():

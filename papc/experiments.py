@@ -51,8 +51,10 @@ class Session:
         return self.time_budget_sec - (time.time() - self.t0)
 
     # -- generic grid runner --------------------------------------------------
-    def run_grid(self, tag, datasets, conditions, seeds=None):
+    def run_grid(self, tag, datasets, conditions, seeds=None, save_dir=None):
         seeds = self.seeds if seeds is None else seeds
+        if save_dir:
+            os.makedirs(save_dir, exist_ok=True)
         for flag, cfg in datasets.items():
             if self.time_left() < 600:
                 print(f"TIME: skipping {flag}")
@@ -70,8 +72,10 @@ class Session:
                 for s in range(existing, seeds):
                     if self.time_left() < 300:
                         break
+                    sp = (os.path.join(save_dir, f"{flag}_{cname}_s{s}.pt")
+                          if save_dir else None)
                     r = train_eval(mkw, tr, va, te, task, nc, ic,
-                                   cfg["ep"], cfg["bs"], cfg["lr"], s)
+                                   cfg["ep"], cfg["bs"], cfg["lr"], s, save_path=sp)
                     self.res[tag][flag][cname].append(r)
                     print(f"  {cname:14s} s{s}: AUC={r['auc']:.4f} ACC={r['acc']:.4f} "
                           f"ECE={r['ece']:.4f} gate={r['gate']:.3f} ({r['t_min']:.1f}m)")

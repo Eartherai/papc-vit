@@ -1,12 +1,11 @@
 <div align="center">
 
-# PAPC · Predictive Coding for Pretrained Vision Transformers
+<img src="assets/banner.png" width="100%" alt="PAPC — Predictive Coding for Pretrained Vision Transformers"/>
 
-## Predictive Coding Auxiliary Losses Are Calibration Levers,<br>Not Accuracy Levers
+<h3>Predictive Coding Auxiliary Losses Are Calibration Levers, Not Accuracy Levers</h3>
+<i>A Cross-Domain Empirical Study</i> · CAISc 2026
 
-### *A Cross-Domain Empirical Study* — CAISc 2026
-
-<!-- TODO: add the paper's author line here, e.g. **Author One, Author Two** -->
+**Khamir Desai**
 
 <p>
 <a href="https://openreview.net/forum?id=Kcsv2jUROe"><img src="https://img.shields.io/badge/📄_Paper-OpenReview-8C1B13?style=for-the-badge" alt="Paper"/></a>
@@ -22,22 +21,24 @@
 
 </div>
 
-<div align="center">
-<img src="assets/paper/fig1_architecture.png" width="94%" alt="HP-ViT architecture"/><br>
-<sub><b>Figure 1.</b> A diagonal SSM predicts each ViT block's output from the previous block's activations. The prediction error is folded back through a learned gate <i>g<sub>i</sub></i> (initialised to zero), and the auxiliary loss uses a stop-gradient target. In PAPC, <i>w<sub>i</sub></i> is learnable per layer and cosine-warmed from zero.</sub>
-</div>
-
----
-
-📄 **Paper:** https://openreview.net/forum?id=Kcsv2jUROe &nbsp;·&nbsp; **PDF:** https://openreview.net/pdf?id=Kcsv2jUROe
-
 > **TL;DR** — Attaching a predictive-coding (PC) sidecar to a pretrained ViT does
 > **not** improve accuracy. What it *does* do, systematically, is move
 > **calibration**. PC auxiliary losses are **calibration levers, not accuracy
 > levers** — and the AUC-optimal strength follows a clean **power law in dataset
-> size**.
+> size**, `w* ≈ 257·n⁻¹·⁴¹`.
 
-## Abstract
+📄 **Paper:** https://openreview.net/forum?id=Kcsv2jUROe &nbsp;·&nbsp; **PDF:** https://openreview.net/pdf?id=Kcsv2jUROe
+
+---
+
+## 🎇 News
+
+- **Sep 2026** — Code, executed notebooks, and the full results release is public. 🎉
+- **Sep 2026** — Paper available on [OpenReview](https://openreview.net/forum?id=Kcsv2jUROe) (CAISc 2026).
+
+---
+
+## 📝 Abstract
 
 We investigate whether predictive-coding auxiliary losses can improve pretrained
 Vision Transformer classifiers. Attaching a diagonal state-space predictor to
@@ -58,31 +59,36 @@ architectures (MedMamba, MedViT) on DermaMNIST by **+4.5 AUC points** and
 RetinaMNIST by **+8.3 points**, suggesting training recipes dominate architectural
 novelty on these benchmarks.
 
----
-
-## Contents
-
-- [Key findings](#key-findings)
-- [Main results (SOTA table)](#main-results-sota-table)
-- [The calibration-lever effect](#the-calibration-lever-effect)
-- [Mechanism: gradient, not gate](#mechanism-gradient-not-gate)
-- [The scaling law](#the-scaling-law)
-- [Full ablation](#full-ablation)
-- [Method](#method)
-- [Repository layout](#repository-layout)
-- [Installation](#installation)
-- [Quickstart](#quickstart)
-- [Reproduce the paper without a GPU](#reproduce-the-paper-without-a-gpu)
-- [Running experiments (GPU)](#running-experiments-gpu)
-- [Using the model in your own code](#using-the-model-in-your-own-code)
-- [Datasets](#datasets)
-- [Reproducibility](#reproducibility)
-- [Citation](#citation)
-- [License](#license)
+<div align="center">
+<img src="assets/paper/fig1_architecture.png" width="92%" alt="HP-ViT architecture"/><br>
+<sub><b>Figure 1.</b> A diagonal SSM predicts each ViT block's output from the previous block's activations. The prediction error is folded back through a learned gate <i>g<sub>i</sub></i> (initialised to zero); the auxiliary loss uses a stop-gradient target. In PAPC, <i>w<sub>i</sub></i> is learnable per layer and cosine-warmed from zero.</sub>
+</div>
 
 ---
 
-## Key findings
+## 📑 Contents
+
+[Key findings](#-key-findings) ·
+[Main results](#-main-results-sota-table) ·
+[Calibration lever](#️-the-calibration-lever-effect) ·
+[Mechanism](#-mechanism-gradient-not-gate) ·
+[Scaling law](#-the-scaling-law) ·
+[Ablation](#-full-ablation) ·
+[Method](#-method) ·
+[Layout](#-repository-layout) ·
+[Install](#-installation) ·
+[Quickstart](#-quickstart) ·
+[Reproduce](#-reproduce-the-paper-without-a-gpu) ·
+[Training](#️-training) ·
+[Inference](#-inference-predict-on-an-image) ·
+[API](#-using-the-model-in-your-own-code) ·
+[Datasets](#-datasets) ·
+[Reproducibility](#️-reproducibility) ·
+[Citation](#-citation)
+
+---
+
+## ✨ Key findings
 
 1. **Calibration, not discriminability.** On **PneumoniaMNIST**, sweeping `w` from
    `5e-4` to `5e-2` improves ECE **3.2×** (0.048 → 0.015) while AUC moves ~0.2 pp.
@@ -102,7 +108,7 @@ novelty on these benchmarks.
 
 ---
 
-## Main results (SOTA table)
+## 🏆 Main results (SOTA table)
 
 Test **AUC** (mean ± std over 3 seeds), ViT-Base @ 224 px. `V>Pub` marks where the
 *vanilla* baseline already beats the best published specialist. Regenerate with
@@ -124,17 +130,17 @@ Test **AUC** (mean ± std over 3 seeds), ViT-Base @ 224 px. `V>Pub` marks where 
 
 ---
 
-## The calibration-lever effect
+## 🎚️ The calibration-lever effect
 
 <div align="center">
-<img src="assets/paper/fig2_weight_sweep.png" width="82%" alt="AUC and ECE vs auxiliary weight"/><br>
+<img src="assets/paper/fig2_weight_sweep.png" width="80%" alt="AUC and ECE vs auxiliary weight"/><br>
 <sub><b>Figure 2.</b> AUC (top) and ECE (bottom) vs. auxiliary weight <i>w</i>. On DermaMNIST larger <i>w</i> <b>worsens</b> ECE; on PneumoniaMNIST it <b>improves</b> ECE 3.2× — while AUC stays essentially flat on both. Same lever, opposite sign.</sub>
 </div>
 
 <br>
 
 <div align="center">
-<img src="assets/paper/fig3_cifar_ece.png" width="46%" alt="CIFAR-100 ECE"/><br>
+<img src="assets/paper/fig3_cifar_ece.png" width="45%" alt="CIFAR-100 ECE"/><br>
 <sub><b>Figure 3.</b> On CIFAR-100, <i>w</i>=0.05 degrades calibration (+88% ECE at n=50k) for a negligible AUC change.</sub>
 </div>
 
@@ -143,10 +149,10 @@ effect flips across datasets.
 
 ---
 
-## Mechanism: gradient, not gate
+## 🔬 Mechanism: gradient, not gate
 
 <div align="center">
-<img src="assets/paper/fig5_gate_clamping.png" width="82%" alt="Gate-clamping ablation"/><br>
+<img src="assets/paper/fig5_gate_clamping.png" width="80%" alt="Gate-clamping ablation"/><br>
 <sub><b>Figure 5.</b> Gate-clamping ablation at <i>w</i>=0.05. <b>Clamped</b> keeps the auxiliary loss but forces the error-integration gate off; <b>Full</b> keeps both. Clamped ≈ Full on AUC ⇒ the effect is driven by the <b>loss gradient</b>, not by adding the error back in.</sub>
 </div>
 
@@ -161,10 +167,10 @@ effect flips across datasets.
 
 ---
 
-## The scaling law
+## 📈 The scaling law
 
 <div align="center">
-<img src="assets/paper/fig4_scaling_law.png" width="46%" alt="Scaling law"/><br>
+<img src="assets/paper/fig4_scaling_law.png" width="45%" alt="Scaling law"/><br>
 <sub><b>Figure 4.</b> The AUC-optimal weight vs. training-set size across four MedMNIST datasets.</sub>
 </div>
 
@@ -180,7 +186,7 @@ alone, with no extra training.
 
 ---
 
-## Full ablation
+## 🧪 Full ablation
 
 Six-condition ablation (AUC / ECE, 3 seeds). All *calibrated* variants land within
 noise of vanilla on AUC; only naive fixed `w=0.05` swings wildly.
@@ -196,7 +202,7 @@ noise of vanilla on AUC; only naive fixed `w=0.05` swings wildly.
 
 ---
 
-## Method
+## 🧠 Method
 
 Given a pretrained ViT with blocks $f_1,\dots,f_L$, a **Predictive Coding Layer**
 sits after each block. A per-channel **diagonal SSM** predicts the next block's
@@ -230,21 +236,26 @@ Full equations ↔ code mapping in [`docs/METHOD.md`](docs/METHOD.md).
 
 ---
 
-## Repository layout
+## 📂 Repository layout
 
 ```
 papc-vit/
 ├── papc/                  # installable package — single source of truth
 │   ├── model.py           #   DiagonalSSM, PCLayer, PAPCViT (all variants)
 │   ├── data.py            #   MedMNIST/CIFAR loaders, transforms, EMA, metrics, ECE
-│   ├── train.py           #   train_eval: fine-tune + evaluate one run
+│   ├── train.py           #   train_eval: fine-tune + evaluate (+ checkpoint save)
 │   ├── config.py          #   per-dataset HPs, published baselines, conditions
 │   └── experiments.py     #   the four sessions (A/B/C/D) + scaling-law fit
-├── scripts/               # run_experiments · analyze_results · make_figures (CLIs)
-├── notebooks/             # original executed notebooks (outputs preserved)
+├── scripts/
+│   ├── run_experiments.py #   train: run a session or an ad-hoc grid
+│   ├── predict.py         #   inference on a single image from a checkpoint
+│   ├── analyze_results.py #   regenerate paper tables from results/ (no GPU)
+│   ├── make_figures.py    #   regenerate result figures (no GPU)
+│   └── make_banner.py     #   regenerate the README banner
+├── notebooks/             # original, fully executed submission notebooks
 ├── results/               # raw metrics JSON from the paper runs (+ schema README)
 ├── paper/                 # CAISc 2026 manuscript PDF
-├── assets/                # figures (assets/paper/ = extracted from the PDF)
+├── assets/                # banner + figures (assets/paper/ = extracted from PDF)
 ├── docs/METHOD.md         # equations ↔ code
 ├── reproducibility/       # hardware / software / run notes
 └── tests/                 # CPU smoke tests (no downloads, no GPU)
@@ -252,7 +263,7 @@ papc-vit/
 
 ---
 
-## Installation
+## 📦 Installation
 
 ```bash
 git clone https://github.com/Eartherai/papc-vit.git
@@ -262,19 +273,21 @@ pip install -e ".[dev]"          # editable install + pytest
 pip install -r requirements.txt
 ```
 
-Requires Python ≥ 3.9. A CUDA GPU is needed only to **train**; analysis, figures,
-and tests are CPU-only.
+**Requirements:** Python ≥ 3.9, PyTorch ≥ 2.1, `timm` ≥ 1.0, `medmnist` ≥ 3.0,
+`scikit-learn`, `numpy`, `pandas`, `matplotlib`, `scipy`, `pillow`. A CUDA GPU is
+needed only to **train**; analysis, figures, inference, and tests are CPU-only.
 
 ---
 
-## Quickstart
+## 🚀 Quickstart
 
 ```bash
 # Reproduce the paper's tables from the checked-in results (no GPU)
 python scripts/analyze_results.py --results-dir results
 
-# Rebuild the figures (no GPU)
+# Rebuild the figures / banner (no GPU)
 python scripts/make_figures.py --results-dir results --out-dir assets
+python scripts/make_banner.py
 
 # Run the CPU smoke tests
 pytest -q
@@ -288,7 +301,7 @@ Equivalent `make` targets: `make analyze`, `make figures`, `make test`, `make sm
 
 ---
 
-## Reproduce the paper without a GPU
+## 🔁 Reproduce the paper without a GPU
 
 Every headline number is regenerated from the JSON in [`results/`](results/):
 
@@ -316,12 +329,14 @@ DATASET-SIZE SCALING LAW
 
 ---
 
-## Running experiments (GPU)
+## 🏋️ Training
 
-Each session is **resumable** and **time-budgeted** — re-running skips completed
-(dataset, condition, seed) triples and stops gracefully near the budget.
+Each paper session is **resumable** and **time-budgeted** — re-running skips
+completed (dataset, condition, seed) triples and stops gracefully near the budget.
+MedMNIST/CIFAR download automatically on first use.
 
 ```bash
+# a full paper session (A / B / C / D)
 python scripts/run_experiments.py --session A --output-dir results_repro
 ```
 
@@ -332,19 +347,42 @@ python scripts/run_experiments.py --session A --output-dir results_repro
 | **C** | CIFAR-100 cross-domain sizes + weight sweep + scaling-law fit | `cifar`, `sweep`, `scaling_law` |
 | **D** | 5-seed runs (tight CIs) + learned per-layer weight extraction | `extended`, `learned_weights` |
 
-Ad-hoc grid on a single dataset:
+Ad-hoc grid on a single dataset, **saving checkpoints** for inference:
 
 ```bash
 python scripts/run_experiments.py --dataset dermamnist \
     --conditions vanilla fixed:0.05 clamped:0.05 papc \
-    --seeds 3 --output-dir results_repro
+    --seeds 3 --save-models checkpoints --output-dir results_repro
 ```
 
 Condition syntax: `vanilla`, `fixed:<w>`, `prog:<w>`, `adaptive`, `papc`, `clamped:<w>`.
 
 ---
 
-## Using the model in your own code
+## 🔮 Inference (predict on an image)
+
+Train with `--save-models DIR` (above), then classify any image with the saved
+checkpoint — CPU is fine:
+
+```bash
+python scripts/predict.py \
+    --checkpoint checkpoints/dermamnist_papc_s0.pt \
+    --image path/to/image.png --topk 3
+```
+
+```
+Prediction: class 5  (confidence 0.8123)
+Top-k:
+  class  5  0.8123  ████████████████████████
+  class  1  0.0904  ███
+  class  0  0.0431  █
+```
+
+The reported **confidence** is exactly the quantity this paper shows PAPC reshapes.
+
+---
+
+## 🧩 Using the model in your own code
 
 ```python
 import torch
@@ -366,7 +404,7 @@ Condition factories in [`papc/config.py`](papc/config.py): `mk_vanilla`,
 
 ---
 
-## Datasets
+## 📊 Datasets
 
 | Source | Datasets | Access |
 |---|---|---|
@@ -379,25 +417,25 @@ redistributed here — please observe the MedMNIST and CIFAR licenses.
 
 ---
 
-## Reproducibility
+## ♻️ Reproducibility
 
 - **Hardware:** NVIDIA A100 (40 GB & 80 GB), ~60 GPU-hours across four sessions.
 - **Software:** Python 3.11, PyTorch, timm ≥ 1.0, medmnist, scikit-learn, numpy,
-  pandas, matplotlib, scipy.
+  pandas, matplotlib, scipy, pillow.
 - **Seeds:** 3 (Sessions A/B), 2 (Session C sweeps), 5 (Session D tight CIs).
 - **Precision:** bf16 autocast where available, TF32 matmul, cuDNN autotune.
 - **Recipe:** AdamW + layer-wise LR decay (0.75), 5% warmup → cosine, EMA (0.9995),
   Mixup/CutMix on multi-class, test-time h-flip averaging.
 
-See [`reproducibility/`](reproducibility/), [`docs/METHOD.md`](docs/METHOD.md), and
-[`results/README.md`](results/README.md) (JSON schema).
+See [`reproducibility/`](reproducibility/), [`docs/METHOD.md`](docs/METHOD.md),
+[`notebooks/`](notebooks/), and [`results/README.md`](results/README.md) (JSON schema).
 
 ---
 
-## Citation
+## 💞 Citation
 
 ```bibtex
-@inproceedings{papc2026,
+@inproceedings{desai2026papc,
   title     = {Predictive Coding Auxiliary Losses Are Calibration Levers,
                Not Accuracy Levers: A Cross-Domain Empirical Study},
   author    = {Khamir Desai},
@@ -407,11 +445,9 @@ See [`reproducibility/`](reproducibility/), [`docs/METHOD.md`](docs/METHOD.md), 
 }
 ```
 
-<!-- Replace <AUTHORS> above (and in CITATION.cff, and the author line at the top) with the final author list. -->
-
 ---
 
-## License
+## 📄 License
 
 Code is released under the [MIT License](LICENSE). The manuscript PDF and the
 datasets retain their respective licenses.

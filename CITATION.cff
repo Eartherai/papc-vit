@@ -3,10 +3,9 @@ message: "If you use this code or findings, please cite the paper."
 title: >-
   Predictive Coding Auxiliary Losses Are Calibration Levers, Not Accuracy
   Levers: A Cross-Domain Empirical Study
-# NOTE: manuscript is under blind review. Replace the placeholder author
-# below with the real author list before publishing this repository.
 authors:
-  - name: "Anonymous (CAISc 2026 submission)"
+  - family-names: Desai
+    given-names: Khamir
 year: 2026
 url: "https://openreview.net/forum?id=Kcsv2jUROe"
 preferred-citation:
@@ -15,7 +14,8 @@ preferred-citation:
     Predictive Coding Auxiliary Losses Are Calibration Levers, Not Accuracy
     Levers: A Cross-Domain Empirical Study
   authors:
-    - name: "Anonymous (CAISc 2026 submission)"
+    - family-names: Desai
+      given-names: Khamir
   collection-title: "1st Conference for AI Scientists (CAISc)"
   year: 2026
   url: "https://openreview.net/forum?id=Kcsv2jUROe"

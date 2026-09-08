@@ -46,6 +46,9 @@ def main():
     ap.add_argument("--seeds", type=int, default=3)
     ap.add_argument("--output-dir", default="results_repro")
     ap.add_argument("--time-budget-hours", type=float, default=8.5)
+    ap.add_argument("--save-models", metavar="DIR", default=None,
+                    help="Ad-hoc grid only: save each trained checkpoint into DIR "
+                         "(loadable by scripts/predict.py).")
     args = ap.parse_args()
 
     budget = int(args.time_budget_hours * 3600)
@@ -63,7 +66,8 @@ def main():
 
     conds = [parse_condition(c) for c in args.conditions]
     s = Session("adhoc", output_dir=args.output_dir, time_budget_sec=budget, seeds=args.seeds)
-    s.run_grid("adhoc", {args.dataset: CFG[args.dataset]}, conds, seeds=args.seeds)
+    s.run_grid("adhoc", {args.dataset: CFG[args.dataset]}, conds,
+               seeds=args.seeds, save_dir=args.save_models)
     s.save()
     print(f"\nDone. Wrote {s.out}")
 
