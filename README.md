@@ -268,9 +268,27 @@ python analyze.py             # tables + figures + logs
 python analyze.py --tables    # just the tables
 ```
 
-`analyze.py` prints the SOTA table, the gate-clamping ablation and the
-fitted scaling law. It also writes per-run logs to [`results/logs/`](results/logs/):
-**269 runs, 36.2 GPU-hours** of recorded train and eval time.
+`analyze.py` prints the SOTA table, the gate-clamping ablation and the fitted
+scaling law, and rebuilds the figures and per-run metric logs.
+
+### Results and logs
+
+| Path | Contents |
+|---|---|
+| [`results/*.json`](results/) | Every recorded run: ACC, AUC, ECE, gate, learned weights, minutes — the source of every number in the paper |
+| [`results/logs/training_*.log`](results/logs/) | Captured console output from the original A100 runs (GPU banner, per-seed lines, wall-clock totals) |
+| [`results/logs/session_*.log`](results/logs/) | Per-run metric tables exported from the JSON |
+| [`results/README.md`](results/README.md) | Full schema documentation |
+
+Across all sessions: **269 runs, 36.2 GPU-hours** of recorded train and eval time.
+A sample from `results/logs/training_session_B.log`:
+
+```
+=== dermamnist (n=7007) ===
+  vanilla        s0: AUC=0.9821 ACC=0.8778 ECE=0.0720 gate=0.000 (3.0m)
+  fixed_0.05     s1: AUC=0.9569 ACC=0.3930 ECE=0.2385 gate=0.055 (9.8m)
+  PAPC           s0: AUC=0.9811 ACC=0.8653 ECE=0.0886 gate=0.007 (9.7m)
+```
 
 ---
 
@@ -364,7 +382,8 @@ papc-vit/
 ├── test_model.py      CPU smoke tests
 ├── requirements.txt
 ├── assets/            Banner and figures
-└── results/           Recorded metrics (JSON), schema, and logs/
+└── results/           Recorded metrics (JSON) + schema
+    └── logs/          Training console logs and exported metric logs
 ```
 
 ---

@@ -1,0 +1,162 @@
+==============================================================================
+Session D - 5-seed runs + learned weights
+captured console output from results_of_d_DPAPC_CAISc_final.ipynb
+original run: NVIDIA A100, executed top-to-bottom
+==============================================================================
+
+--- cell 1 -------------------------------------------------------------
+SESSION = D
+
+--- cell 2 -------------------------------------------------------------
+GPU: NVIDIA A100-SXM4-40GB | 42GB
+Output: /teamspace/studios/this_studio | bf16: True | timm: 1.0.27
+
+--- cell 3 -------------------------------------------------------------
+  vanilla  params= 85,804,808  ploss=0.0000
+  fixed    params= 92,797,459  ploss=0.1146
+  PAPC     params= 92,797,471  ploss=0.0000
+Model OK
+
+--- cell 4 -------------------------------------------------------------
+Data + metrics ready
+
+--- cell 5 -------------------------------------------------------------
+train_eval ready
+
+--- cell 6 -------------------------------------------------------------
+Config ready | SESSION = D
+
+--- cell 7 -------------------------------------------------------------
+SESSION D: 5-seed runs for tight CIs + learned-weight visualization
+
+=== pathmnist (n=89996) ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  vanilla        s0: AUC=0.9981 ACC=0.9600 ECE=0.0603 gate=0.000 (11.0m)
+  vanilla        s1: AUC=0.9971 ACC=0.9561 ECE=0.0597 gate=0.000 (10.9m)
+  vanilla        s2: AUC=0.9977 ACC=0.9553 ECE=0.0599 gate=0.000 (10.9m)
+  vanilla        s3: AUC=0.9975 ACC=0.9603 ECE=0.0752 gate=0.000 (10.9m)
+  vanilla        s4: AUC=0.9975 ACC=0.9572 ECE=0.0620 gate=0.000 (10.9m)
+  PAPC           s0: AUC=0.9974 ACC=0.9561 ECE=0.0708 gate=0.007 (38.6m)
+  PAPC           s1: AUC=0.9980 ACC=0.9543 ECE=0.0752 gate=0.006 (38.6m)
+  PAPC           s2: AUC=0.9975 ACC=0.9564 ECE=0.0571 gate=0.006 (38.6m)
+  PAPC           s3: AUC=0.9976 ACC=0.9584 ECE=0.0588 gate=0.005 (38.6m)
+  PAPC           s4: AUC=0.9969 ACC=0.9532 ECE=0.0595 gate=0.006 (38.6m)
+  vanilla        mean AUC=0.9976+-0.0003  (best pub=0.999)
+  PAPC           mean AUC=0.9975+-0.0004  (best pub=0.999)
+100%|██████████| 1.54G/1.54G [00:40<00:00, 38.4MB/s] 
+
+=== bloodmnist (n=11959) ===
+  vanilla        s0: AUC=0.9992 ACC=0.9901 ECE=0.0930 gate=0.000 (3.9m)
+  vanilla        s1: AUC=0.9994 ACC=0.9895 ECE=0.0782 gate=0.000 (3.9m)
+  vanilla        s2: AUC=0.9994 ACC=0.9904 ECE=0.0575 gate=0.000 (3.9m)
+  vanilla        s3: AUC=0.9994 ACC=0.9904 ECE=0.0537 gate=0.000 (3.9m)
+  vanilla        s4: AUC=0.9995 ACC=0.9906 ECE=0.0872 gate=0.000 (3.9m)
+  PAPC           s0: AUC=0.9994 ACC=0.9871 ECE=0.0748 gate=0.015 (13.4m)
+  PAPC           s1: AUC=0.9994 ACC=0.9880 ECE=0.0715 gate=0.017 (13.4m)
+  PAPC           s2: AUC=0.9994 ACC=0.9889 ECE=0.0620 gate=0.011 (13.4m)
+  PAPC           s3: AUC=0.9994 ACC=0.9889 ECE=0.1055 gate=0.015 (13.4m)
+  PAPC           s4: AUC=0.9994 ACC=0.9880 ECE=0.0805 gate=0.011 (13.4m)
+  vanilla        mean AUC=0.9994+-0.0001  (best pub=0.999)
+  PAPC           mean AUC=0.9994+-0.0000  (best pub=0.999)
+100%|██████████| 1.09G/1.09G [00:59<00:00, 18.5MB/s]
+
+=== dermamnist (n=7007) ===
+  vanilla        s0: AUC=0.9821 ACC=0.8778 ECE=0.0720 gate=0.000 (3.0m)
+  vanilla        s1: AUC=0.9812 ACC=0.8733 ECE=0.0765 gate=0.000 (3.0m)
+  vanilla        s2: AUC=0.9822 ACC=0.8698 ECE=0.0948 gate=0.000 (3.0m)
+  vanilla        s3: AUC=0.9812 ACC=0.8673 ECE=0.0683 gate=0.000 (3.0m)
+  vanilla        s4: AUC=0.9817 ACC=0.8728 ECE=0.0868 gate=0.000 (3.0m)
+  PAPC           s0: AUC=0.9811 ACC=0.8653 ECE=0.0886 gate=0.007 (9.7m)
+  PAPC           s1: AUC=0.9809 ACC=0.8673 ECE=0.1028 gate=0.006 (9.8m)
+  PAPC           s2: AUC=0.9799 ACC=0.8708 ECE=0.0776 gate=0.008 (9.8m)
+  PAPC           s3: AUC=0.9820 ACC=0.8743 ECE=0.1125 gate=0.008 (9.8m)
+  PAPC           s4: AUC=0.9816 ACC=0.8688 ECE=0.0829 gate=0.009 (9.8m)
+  vanilla        mean AUC=0.9817+-0.0004  (best pub=0.937)
+  PAPC           mean AUC=0.9811+-0.0007  (best pub=0.937)
+100%|██████████| 30.9M/30.9M [00:01<00:00, 22.2MB/s]
+
+=== breastmnist (n=546) ===
+  vanilla        s0: AUC=0.8023 ACC=0.7179 ECE=0.0678 gate=0.000 (0.5m)
+  vanilla        s1: AUC=0.8096 ACC=0.6603 ECE=0.0762 gate=0.000 (0.5m)
+  vanilla        s2: AUC=0.8236 ACC=0.8013 ECE=0.0544 gate=0.000 (0.5m)
+  vanilla        s3: AUC=0.8759 ACC=0.5449 ECE=0.2403 gate=0.000 (0.5m)
+  vanilla        s4: AUC=0.8727 ACC=0.8333 ECE=0.1016 gate=0.000 (0.5m)
+  PAPC           s0: AUC=0.8724 ACC=0.7628 ECE=0.1601 gate=0.006 (1.4m)
+  PAPC           s1: AUC=0.8338 ACC=0.7564 ECE=0.0941 gate=0.006 (1.4m)
+  PAPC           s2: AUC=0.8215 ACC=0.6282 ECE=0.1164 gate=0.004 (1.4m)
+  PAPC           s3: AUC=0.8236 ACC=0.8141 ECE=0.0447 gate=0.005 (1.4m)
+  PAPC           s4: AUC=0.8206 ACC=0.8077 ECE=0.0583 gate=0.005 (1.4m)
+  vanilla        mean AUC=0.8368+-0.0314  (best pub=0.938)
+  PAPC           mean AUC=0.8344+-0.0196  (best pub=0.938)
+100%|██████████| 214M/214M [02:23<00:00, 1.49MB/s] 
+
+=== pneumoniamnist (n=4708) ===
+  vanilla        s0: AUC=0.9923 ACC=0.8830 ECE=0.0394 gate=0.000 (1.9m)
+  vanilla        s1: AUC=0.9908 ACC=0.9583 ECE=0.0828 gate=0.000 (1.9m)
+  vanilla        s2: AUC=0.9925 ACC=0.9423 ECE=0.0453 gate=0.000 (1.9m)
+  vanilla        s3: AUC=0.9892 ACC=0.9359 ECE=0.0449 gate=0.000 (1.9m)
+  vanilla        s4: AUC=0.9908 ACC=0.8365 ECE=0.0556 gate=0.000 (1.9m)
+  PAPC           s0: AUC=0.9914 ACC=0.8638 ECE=0.0517 gate=0.005 (6.5m)
+  PAPC           s1: AUC=0.9908 ACC=0.8958 ECE=0.0496 gate=0.003 (6.6m)
+  PAPC           s2: AUC=0.9900 ACC=0.9391 ECE=0.0385 gate=0.007 (6.5m)
+  PAPC           s3: AUC=0.9930 ACC=0.9487 ECE=0.0696 gate=0.005 (6.6m)
+  PAPC           s4: AUC=0.9917 ACC=0.9423 ECE=0.0444 gate=0.004 (6.5m)
+  vanilla        mean AUC=0.9911+-0.0012  (best pub=0.995)
+  PAPC           mean AUC=0.9913+-0.0010  (best pub=0.995)
+100%|██████████| 128M/128M [00:03<00:00, 33.4MB/s] 
+
+=== retinamnist (n=1080) ===
+  vanilla        s0: AUC=0.8677 ACC=0.5825 ECE=0.0964 gate=0.000 (1.0m)
+  vanilla        s1: AUC=0.8664 ACC=0.6375 ECE=0.0919 gate=0.000 (1.0m)
+  vanilla        s2: AUC=0.8340 ACC=0.5425 ECE=0.1323 gate=0.000 (1.0m)
+  vanilla        s3: AUC=0.8403 ACC=0.4100 ECE=0.1374 gate=0.000 (1.0m)
+  vanilla        s4: AUC=0.8524 ACC=0.5525 ECE=0.0708 gate=0.000 (1.0m)
+  PAPC           s0: AUC=0.8675 ACC=0.5450 ECE=0.0944 gate=0.005 (2.8m)
+  PAPC           s1: AUC=0.8589 ACC=0.5850 ECE=0.0793 gate=0.004 (2.8m)
+  PAPC           s2: AUC=0.8530 ACC=0.5450 ECE=0.0890 gate=0.007 (2.8m)
+  PAPC           s3: AUC=0.8565 ACC=0.6325 ECE=0.0950 gate=0.008 (2.8m)
+  PAPC           s4: AUC=0.8774 ACC=0.6100 ECE=0.1656 gate=0.008 (2.8m)
+  vanilla        mean AUC=0.8522+-0.0135  (best pub=0.773)
+  PAPC           mean AUC=0.8627+-0.0088  (best pub=0.773)
+100%|██████████| 1.80G/1.80G [00:45<00:00, 39.6MB/s] 
+
+=== organamnist (n=34561) ===
+  vanilla        s0: AUC=0.9950 ACC=0.9575 ECE=0.0476 gate=0.000 (6.0m)
+  vanilla        s1: AUC=0.9973 ACC=0.9561 ECE=0.0569 gate=0.000 (6.0m)
+  vanilla        s2: AUC=0.9964 ACC=0.9576 ECE=0.0516 gate=0.000 (6.0m)
+  vanilla        s3: AUC=0.9961 ACC=0.9588 ECE=0.0594 gate=0.000 (6.0m)
+  vanilla        mean AUC=0.9962+-0.0008  (best pub=0.998)
+TIME: skipping organcmnist
+
+================================================================================
+EXTENDED TABLE (5 seeds)
+  pathmnist        vanilla : 0.9976 +- 0.0003  (n=5 seeds)
+  pathmnist        PAPC    : 0.9975 +- 0.0004  (n=5 seeds)
+  bloodmnist       vanilla : 0.9994 +- 0.0001  (n=5 seeds)
+  bloodmnist       PAPC    : 0.9994 +- 0.0000  (n=5 seeds)
+  dermamnist       vanilla : 0.9817 +- 0.0004  (n=5 seeds)
+  dermamnist       PAPC    : 0.9811 +- 0.0007  (n=5 seeds)
+  breastmnist      vanilla : 0.8368 +- 0.0314  (n=5 seeds)
+  breastmnist      PAPC    : 0.8344 +- 0.0196  (n=5 seeds)
+  pneumoniamnist   vanilla : 0.9911 +- 0.0012  (n=5 seeds)
+  pneumoniamnist   PAPC    : 0.9913 +- 0.0010  (n=5 seeds)
+  retinamnist      vanilla : 0.8522 +- 0.0135  (n=5 seeds)
+  retinamnist      PAPC    : 0.8627 +- 0.0088  (n=5 seeds)
+  organamnist      vanilla : 0.9962 +- 0.0008  (n=4 seeds)
+
+--- Learned per-layer weights (PAPC) ---
+  pathmnist       : 0.0021 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005 0.0005
+  bloodmnist      : 0.0020 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012 0.0012
+  dermamnist      : 0.0020 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014 0.0014
+  breastmnist     : 0.0020 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019 0.0019
+  pneumoniamnist  : 0.0020 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016 0.0016
+  retinamnist     : 0.0020 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018 0.0018
+
+Session D done: 508.7 min
+
+--- cell 8 -------------------------------------------------------------
+
+Saved -> /teamspace/studios/this_studio/papc_D_results.json
+Total wall-clock: 508.7 min
+Download this JSON. Send it to me to fill in all paper tables and figures.
+

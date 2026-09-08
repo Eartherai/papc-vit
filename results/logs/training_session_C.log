@@ -1,0 +1,106 @@
+==============================================================================
+Session C - CIFAR-100 + weight sweep
+captured console output from results_of_c_papc_PAPC_CAISc_final.ipynb
+original run: NVIDIA A100, executed top-to-bottom
+==============================================================================
+
+--- cell 1 -------------------------------------------------------------
+SESSION = C
+
+--- cell 2 -------------------------------------------------------------
+GPU: NVIDIA A100-SXM4-40GB | 42GB
+Output: /teamspace/studios/this_studio | bf16: True | timm: 1.0.27
+
+--- cell 3 -------------------------------------------------------------
+  vanilla  params= 85,804,808  ploss=0.0000
+  fixed    params= 92,797,459  ploss=0.1146
+  PAPC     params= 92,797,471  ploss=0.0000
+Model OK
+
+--- cell 4 -------------------------------------------------------------
+Data + metrics ready
+
+--- cell 5 -------------------------------------------------------------
+train_eval ready
+
+--- cell 6 -------------------------------------------------------------
+Config ready | SESSION = C
+
+--- cell 7 -------------------------------------------------------------
+SESSION C: CIFAR-100 cross-domain + MedMNIST weight scaling sweep
+
+=== CIFAR-100 n=2000 ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  vanilla      s0: ACC=0.1476 AUC=0.8380 (1.3m)
+  vanilla      s1: ACC=0.1556 AUC=0.8562 (1.2m)
+  PAPC         s0: ACC=0.1448 AUC=0.8486 (3.5m)
+  PAPC         s1: ACC=0.1436 AUC=0.8418 (3.4m)
+  fixed_001    s0: ACC=0.1445 AUC=0.8485 (3.4m)
+  fixed_001    s1: ACC=0.1439 AUC=0.8402 (3.4m)
+  fixed_05     s0: ACC=0.1405 AUC=0.8446 (3.4m)
+  fixed_05     s1: ACC=0.1379 AUC=0.8383 (3.4m)
+
+=== CIFAR-100 n=10000 ===
+  vanilla      s0: ACC=0.8511 AUC=0.9957 (2.3m)
+  vanilla      s1: ACC=0.8584 AUC=0.9960 (2.3m)
+  PAPC         s0: ACC=0.8400 AUC=0.9951 (7.7m)
+  PAPC         s1: ACC=0.8515 AUC=0.9959 (7.7m)
+  fixed_001    s0: ACC=0.8389 AUC=0.9950 (7.7m)
+  fixed_001    s1: ACC=0.8496 AUC=0.9959 (7.7m)
+  fixed_05     s0: ACC=0.8345 AUC=0.9946 (7.7m)
+  fixed_05     s1: ACC=0.8491 AUC=0.9956 (7.7m)
+
+=== CIFAR-100 n=50000 ===
+  vanilla      s0: ACC=0.9346 AUC=0.9994 (5.3m)
+  vanilla      s1: ACC=0.9343 AUC=0.9994 (5.3m)
+  PAPC         s0: ACC=0.9350 AUC=0.9994 (18.5m)
+  PAPC         s1: ACC=0.9342 AUC=0.9994 (18.5m)
+  fixed_001    s0: ACC=0.9342 AUC=0.9994 (18.5m)
+  fixed_001    s1: ACC=0.9348 AUC=0.9994 (18.5m)
+  fixed_05     s0: ACC=0.9278 AUC=0.9992 (18.5m)
+  fixed_05     s1: ACC=0.9265 AUC=0.9992 (18.5m)
+
+--- Weight scaling sweep ---
+100%|██████████| 30.9M/30.9M [00:02<00:00, 14.2MB/s]
+
+=== SWEEP breastmnist (n=546) ===
+  w=0.0005  AUC=0.8515 ECE=0.1042
+  w=0.001   AUC=0.8533 ECE=0.1134
+  w=0.005   AUC=0.8479 ECE=0.1072
+  w=0.01    AUC=0.8490 ECE=0.1134
+  w=0.05    AUC=0.8599 ECE=0.1102
+100%|██████████| 1.09G/1.09G [00:44<00:00, 24.7MB/s]
+
+=== SWEEP dermamnist (n=7007) ===
+  w=0.0005  AUC=0.9806 ECE=0.0925
+  w=0.001   AUC=0.9811 ECE=0.0929
+  w=0.005   AUC=0.9801 ECE=0.0966
+  w=0.01    AUC=0.9783 ECE=0.1003
+  w=0.05    AUC=0.9660 ECE=0.1515
+100%|██████████| 214M/214M [00:12<00:00, 16.6MB/s] 
+
+=== SWEEP pneumoniamnist (n=4708) ===
+  w=0.0005  AUC=0.9916 ECE=0.0476
+  w=0.001   AUC=0.9914 ECE=0.0407
+  w=0.005   AUC=0.9912 ECE=0.0305
+  w=0.01    AUC=0.9915 ECE=0.0260
+  w=0.05    AUC=0.9897 ECE=0.0146
+100%|██████████| 1.54G/1.54G [01:22<00:00, 18.6MB/s] 
+
+=== SWEEP bloodmnist (n=11959) ===
+  w=0.0005  AUC=0.9994 ECE=0.0708
+  w=0.001   AUC=0.9994 ECE=0.0673
+  w=0.005   AUC=0.9994 ECE=0.0765
+  w=0.01    AUC=0.9993 ECE=0.0667
+  w=0.05    AUC=0.9991 ECE=0.0956
+
+SCALING LAW: w* = 256.7 * n^(-1.412)  R2=0.831
+
+Session C done: 510.3 min
+
+--- cell 8 -------------------------------------------------------------
+
+Saved -> /teamspace/studios/this_studio/papc_C_results.json
+Total wall-clock: 510.3 min
+Download this JSON. Send it to me to fill in all paper tables and figures.
+
